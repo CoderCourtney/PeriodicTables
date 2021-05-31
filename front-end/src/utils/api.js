@@ -68,6 +68,15 @@ export async function listReservations(params, signal) {
     .then(formatReservationTime);
 }
 
+
+export async function listTables(params, signal) {
+  const url = new URL(`${API_BASE_URL}/tables`);
+  Object.entries(params).forEach(([key, value]) =>
+    url.searchParams.append(key, value.toString())
+  );
+  return await fetchJson(url, { headers, signal }, [])
+}
+
 // POST RESERVATION NEEDED
 // send post req to the backend
 // after hitting the submit on the frontend to go to the backend
@@ -86,6 +95,31 @@ export async function createReservation(reservation, signal) {
     .then(formatReservationDate)
     .then(formatReservationTime);
 }
+
+// export async function createTable(table, signal) {
+//   const url = `${API_BASE_URL}/tables`;
+//   table.capacity = Number(table.capacity);
+//   const options = {
+//     method: "POST",
+//     headers,
+//     body: JSON.stringify({ data: table }),
+//   };
+//   return await fetchJson(url, options);
+// }
+
+export async function createTable(table, signal) {
+  const url = `${API_BASE_URL}/tables`;
+
+  const body = JSON.stringify({ data: table });
+
+  return await fetchJson(url, { headers, signal, method: "POST", body }, []);
+}
+
+
+
+
+
+
 
 export function formatPhoneNumber(value) {
   if (!value) return value;
