@@ -42,11 +42,16 @@ function update(updatedTable) {
 //         .first();
 //     });
 // }
+
+// function destroy(tableId) {
+//   return knex(tableName).where({ table_id: tableId }).del();
+// }
 module.exports = {
   list,
   create,
   read,
   update,
+  // destroy,
 };
 
 // return knex.schema.createTable("tables", (table) => {

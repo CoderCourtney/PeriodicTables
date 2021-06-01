@@ -1,6 +1,7 @@
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const tablesService = require("./tables.service");
 const reservationsService = require("../reservations/reservations.service");
+const { destroy } = require("../db/connection");
 
 const validFields = ["table_name", "capacity"];
 
@@ -92,6 +93,21 @@ async function validateToSeatTable(req, res, next) {
   next();
 }
 
+// DESTROY MIDDLEWARE
+// async function tableIdExists(req, res, next) {
+//   const { table_id } = req.params;
+//   const tableId = await service.read(table_id);
+
+//   if (tableId) {
+//     res.locals.table = tableId;
+//     return next();
+//   }
+//   return next({
+//     status: 404,
+//     message: "Table cannot be found.",
+//   });
+// }
+
 async function create(req, res) {
   const newTable = req.body.data;
   const createdTable = await tablesService.create(newTable);
@@ -108,6 +124,12 @@ async function update(req, res) {
   res.status(200).json({ data });
 }
 
+// async function destroy(req, res) {
+//   const tableId = res.locals.table.table_id;
+//   await service.destroy(tableId);
+//   res.sendStatus(204).json("No content");
+// }
+
 module.exports = {
   list,
   create: [
@@ -119,4 +141,5 @@ module.exports = {
     asyncErrorBoundary(validateToSeatTable),
     asyncErrorBoundary(update),
   ],
+  // delete: [asyncErrorBoundary(tableIdExists), asyncErrorBoundary(destroy)],
 };
