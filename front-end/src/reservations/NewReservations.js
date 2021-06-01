@@ -45,21 +45,24 @@ export default function NewReservation({ loadDashboard }) {
     //   setErrors(errorMessage);
     // }
   }
+  // console.log("\n\n\n");
+  // console.log(Date().toLocaleString());
 
   const validateDate = () => {
     const errorsArray = [];
     // const today = new Date();
     const reservationDate = new Date(formData.reservation_date);
+    // console.log("\n\n\n reservation date", reservationDate);
     const reservationTime = formData.reservation_time;
+    // const currentDateTime = Date().toLocaleString();
 
     //1 equals tuesday
     if (reservationDate.getDay() === 1) {
-      errorsArray.push(
-        "We are closed on Tuesdays, hope to see you soon!"
-      );
+      errorsArray.push("We are closed on Tuesdays, hope to see you soon!");
     }
     if (formData.reservationDate < today()) {
-      errorsArray.push("Reservations cannot be made in the past, pick today's date or a future date.",
+      errorsArray.push(
+        "Reservations cannot be made in the past, pick today's date or a future date."
       );
     }
     if (reservationTime.localeCompare("10:30") === -1) {
@@ -67,7 +70,9 @@ export default function NewReservation({ loadDashboard }) {
     } else if (reservationTime.localeCompare("21:30") === 1) {
       errorsArray.push("We are closed after 9:30PM");
     } else if (reservationTime.localeCompare("21:00") === 1) {
-      errorsArray.push("You must book at least 60 minutes before the restaurant closes");
+      errorsArray.push(
+        "You must book at least 60 minutes before the restaurant closes"
+      );
     }
 
     if (errorsArray.length) {
@@ -79,7 +84,7 @@ export default function NewReservation({ loadDashboard }) {
 
   return (
     <div>
-      {errors && <ErrorAlert error={errors} />}
+      <ErrorAlert error={errors} />
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="first_name">First Name:&nbsp;</label>

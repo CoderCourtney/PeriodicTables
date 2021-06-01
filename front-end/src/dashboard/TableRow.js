@@ -8,8 +8,9 @@ export default function TableRow({ table }) {
       <th scope="row">{table.table_id}</th>
       <td>{table.table_name}</td>
       <td>{table.capacity}</td>
-      {/* the instructions say the tests are looking for this data-table-id-status, so be sure to include it. */}
-      <td data-table-id-status={table.table_id}>{table.status}</td>
+      <td data-table-id-status={table.table_id}>
+        {table.reservation_id ? "occupied" : "free"}
+      </td>
     </tr>
   );
 }

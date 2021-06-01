@@ -62,25 +62,42 @@ export async function listReservations(params, signal) {
   const url = new URL(`${API_BASE_URL}/reservations`);
   Object.entries(params).forEach(([key, value]) =>
     url.searchParams.append(key, value.toString())
-  );
+  ); // key is date
   return await fetchJson(url, { headers, signal }, [])
     .then(formatReservationDate)
     .then(formatReservationTime);
 }
 
-
-export async function listTables(params, signal) {
+export async function listTables(signal) {
   const url = new URL(`${API_BASE_URL}/tables`);
-  Object.entries(params).forEach(([key, value]) =>
-    url.searchParams.append(key, value.toString())
-  );
-  return await fetchJson(url, { headers, signal }, [])
+  // Object.entries(params).forEach(([key, value]) =>
+  //   url.searchParams.append(key, value.toString())
+  // );
+  return await fetchJson(url, { headers, signal }, []);
 }
 
 // POST RESERVATION NEEDED
 // send post req to the backend
 // after hitting the submit on the frontend to go to the backend
 // fetch call to make a post req
+
+export async function updateTable(tableId, reservationId, signal) {
+  const url = `${API_BASE_URL}/tables/${tableId}/seat`;
+  // table.capacity = Number(table.capacity);
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: { reservation_id: reservationId } }),
+    signal,
+  };
+  return await fetchJson(url, options, []);
+}
+
+export async function readReservation(reservation_id, signal) {
+  const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}`);
+
+  return await fetchJson(url, { headers, signal }, []);
+}
 
 export async function createReservation(reservation, signal) {
   const url = `${API_BASE_URL}/reservations`;
@@ -89,37 +106,33 @@ export async function createReservation(reservation, signal) {
     method: "POST",
     headers,
     body: JSON.stringify({ data: reservation }),
+    signal,
   };
 
-  return await fetchJson(url, options)
+  return await fetchJson(url, options, [])
     .then(formatReservationDate)
     .then(formatReservationTime);
 }
 
-// export async function createTable(table, signal) {
-//   const url = `${API_BASE_URL}/tables`;
-//   table.capacity = Number(table.capacity);
-//   const options = {
-//     method: "POST",
-//     headers,
-//     body: JSON.stringify({ data: table }),
-//   };
-//   return await fetchJson(url, options);
-// }
-
 export async function createTable(table, signal) {
   const url = `${API_BASE_URL}/tables`;
-
-  const body = JSON.stringify({ data: table });
-
-  return await fetchJson(url, { headers, signal, method: "POST", body }, []);
+  table.capacity = Number(table.capacity);
+  const options = {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ data: table }),
+    signal,
+  };
+  return await fetchJson(url, options, []);
 }
 
+// export async function createTable(table, signal) {
+//   const url = `${API_BASE_URL}/tables`;
 
+//   const body = JSON.stringify({ data: table });
 
-
-
-
+//   return await fetchJson(url, { headers, signal, method: "POST", body }, []);
+// }
 
 export function formatPhoneNumber(value) {
   if (!value) return value;

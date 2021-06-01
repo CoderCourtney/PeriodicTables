@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
-import { createTable } from "../utils/api";
+import { createTable, listTables } from "../utils/api";
 import { today } from "../utils/date-time";
 
-export default function NewTable() {
+export default function NewTable({ tables, setTables }) {
   const history = useHistory();
 
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     table_name: "",
-    capacity: 1,
+    capacity: 0,
   });
 
   function handleChange({ target }) {
@@ -32,6 +32,9 @@ export default function NewTable() {
     const valid = validateFields();
     if (valid) {
       createTable(formData)
+        .then((returnedTable) =>
+          setTables([...tables, { ...returnedTable, status: "free" }])
+        )
         .then(() => history.push(`/dashboard?date=${today()}`))
         .catch(setError);
     }

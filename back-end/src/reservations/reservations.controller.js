@@ -27,6 +27,18 @@ function notNull(obj) {
   return true;
 }
 
+// HELPER FN
+function isPast(date) {
+  const temp = date.split("-");
+  const newDate = new Date(
+    Number(temp[0]),
+    Number(temp[1]) - 1, // indexing for the months 
+    Number(temp[2]) + 1
+  );
+
+  return newDate.getTime() < new Date().getTime();
+}
+
 function hasValidFields(req, res, next) {
   const { data = {} } = req.body;
 
@@ -85,7 +97,7 @@ function hasValidFields(req, res, next) {
         "Reservations cannot be made on a Tuesday, the restaurant is closed.",
     });
   }
-  if (reserveDate < todaysDate) {
+  if (isPast(data.reservation_date)) {
     return next({
       status: 400,
       message: "Reservations must be made for a future date.",
