@@ -1,7 +1,6 @@
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const tablesService = require("./tables.service");
 const reservationsService = require("../reservations/reservations.service");
-const { destroy } = require("../db/connection");
 
 const validFields = ["table_name", "capacity"];
 
@@ -93,20 +92,36 @@ async function validateToSeatTable(req, res, next) {
   next();
 }
 
-// DESTROY MIDDLEWARE
-// async function tableIdExists(req, res, next) {
-//   const { table_id } = req.params;
-//   const tableId = await service.read(table_id);
+// DESTROY MIDDLEWARE 1 of 2
+async function tableIdExists(req, res, next) {
+  const tableId = req.params.table_id;
 
-//   if (tableId) {
-//     res.locals.table = tableId;
-//     return next();
-//   }
-//   return next({
-//     status: 404,
-//     message: "Table cannot be found.",
-//   });
-// }
+  const table = await tablesService.read(tableId);
+  
+  if (table) {
+    res.locals.table = table;
+    return next();
+  }
+  return next({
+    status: 404,
+    message: `${tableId} table_id is non-existent.`,
+  });
+}
+
+// DESTROY MIDDLEWARE 2 of 2
+async function tableNotOccupied(req, res, next) {
+  const tableId = req.params.table_id;
+  const table = await tablesService.read(tableId);
+
+  if (table.reservation_id) {
+    res.locals.table = table;
+    return next();
+  }
+  return next({
+    status: 400,
+    message: "table_id is not occupied.",
+  });
+}
 
 async function create(req, res) {
   const newTable = req.body.data;
@@ -124,11 +139,14 @@ async function update(req, res) {
   res.status(200).json({ data });
 }
 
-// async function destroy(req, res) {
-//   const tableId = res.locals.table.table_id;
-//   await service.destroy(tableId);
-//   res.sendStatus(204).json("No content");
-// }
+async function destroy(req, res) {
+  const tabId = req.params.table_id;
+  const resId = res.locals.table.reservation_id;
+  console.log("\n\n\n table_id, resId", tabId, resId)
+  // update the reservation status from booked
+  await tablesService.delete(resId);
+  res.sendStatus(200).json(`table_id: ${tabId} is occupied`);
+}
 
 module.exports = {
   list,
@@ -141,5 +159,9 @@ module.exports = {
     asyncErrorBoundary(validateToSeatTable),
     asyncErrorBoundary(update),
   ],
-  // delete: [asyncErrorBoundary(tableIdExists), asyncErrorBoundary(destroy)],
+  delete: [
+    asyncErrorBoundary(tableIdExists),
+    asyncErrorBoundary(tableNotOccupied),
+    asyncErrorBoundary(destroy),
+  ],
 };

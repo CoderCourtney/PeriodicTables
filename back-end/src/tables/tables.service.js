@@ -43,15 +43,16 @@ function update(updatedTable) {
 //     });
 // }
 
-// function destroy(tableId) {
-//   return knex(tableName).where({ table_id: tableId }).del();
-// }
+function destroy(resId) {
+  return knex(tableName).where({ reservation_id: resId }).del();
+}
+
 module.exports = {
   list,
   create,
   read,
   update,
-  // destroy,
+  delete: destroy,
 };
 
 // return knex.schema.createTable("tables", (table) => {
