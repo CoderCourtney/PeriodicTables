@@ -1,9 +1,9 @@
 import React from "react";
 import { useHistory } from "react-router";
-import { deleteOnFinish, listTables } from "../utils/api";
+import { deleteOnFinish, listReservations, listTables } from "../utils/api";
 
 // TABLE DISPLAY IS PARENT
-export default function TableRow({ table, tables, setTables }) {
+export default function TableRow({ table, tables, setTables, date }) {
   const history = useHistory();
   // if (!table) return null;
 
@@ -19,8 +19,10 @@ export default function TableRow({ table, tables, setTables }) {
           tables.filter(
             (tableToKeep) => tableToKeep.table_id !== table.table_id
           )
-        ).then(() => listTables())
+        )
+        .then(() => listTables())
         .then(setTables)
+        .then(() => listReservations({ date }, abortController.signal))
         .catch();
     }
     return () => abortController.abort();
@@ -44,7 +46,7 @@ export default function TableRow({ table, tables, setTables }) {
             Finish
           </button>
         ) : (
-          "free"
+          ""
         )}
       </td>
     </tr>

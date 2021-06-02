@@ -1,8 +1,9 @@
 import React from "react";
 
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
+import ReservationButtons from "./ReservationButtons";
 
-export default function ReservationsDisplay({ reservations }) {
+export default function ReservationsDisplay({ reservations, loadDashboard }) {
   return (
     <div>
       {reservations.map((reservation) => (
@@ -15,7 +16,12 @@ export default function ReservationsDisplay({ reservations }) {
             <p className="card-text">{reservation.reservation_date}</p>
             <p className="card-text">{reservation.reservation_time}</p>
             <p className="card-text">{reservation.people}</p>
-            <p className="card-text">{}</p>
+            <p
+              className="card-text"
+              data-reservation-id-status={reservation.reservation_id}
+            >
+              {reservation.status}
+            </p>
             {/* <button
               type="button"
               className="btn btn-primary"
@@ -23,13 +29,10 @@ export default function ReservationsDisplay({ reservations }) {
             >
               Seat
             </button> */}
-            <Link
-              to={`/reservations/${reservation.reservation_id}/seat`}
-              className="btn btn-secondary mr-1 oi"
-            >
-              {" "}
-              Seat
-            </Link>
+            <ReservationButtons
+              reservation_id={reservation.reservation_id}
+              status={reservation.status}
+            />
           </div>
         </div>
       ))}

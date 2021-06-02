@@ -41,7 +41,7 @@ export default function SeatReservation({
     const valid = validateSeat();
     if (valid) {
       updateTable(tableId, reservation_id)
-        .then(() => listReservations({date: today()}).then(setReservations))
+        .then(() => listReservations({ date: today() }).then(setReservations))
         .then(() => listTables().then(setTables))
         .then(() => history.push(`/dashboard`))
         .catch(setErrors);
@@ -96,7 +96,7 @@ export default function SeatReservation({
 
   const tableOptionsJSX = () => {
     return tables.map((table) => (
-      <option value={table.table_id}>
+      <option value={table.table_id} key={table.table_id}>
         {table.table_name} - {table.capacity}
       </option>
     ));

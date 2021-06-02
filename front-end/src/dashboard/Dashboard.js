@@ -93,7 +93,7 @@ function Dashboard({
         Next
       </button>
       <ErrorAlert error={reservationsError} />
-      <ReservationsDisplay reservations={reservations} />
+      <ReservationsDisplay reservations={reservations} loadDashboard={loadDashboard}/>
 
       {/* <table class="table">
         <thead>
@@ -113,7 +113,7 @@ function Dashboard({
 
       <h4 className="mb-0">Tables</h4>
       <ErrorAlert error={tablesError} />
-      <TableDisplay tables={tables} loadDashboard={loadDashboard} setTables={setTables}/>
+      <TableDisplay date={date }tables={tables} loadDashboard={loadDashboard} setTables={setTables}/>
     </main>
   );
 }

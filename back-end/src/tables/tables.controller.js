@@ -66,7 +66,7 @@ async function validateToSeatTable(req, res, next) {
   const reservationId = await reservationsService.read(
     req.body.data.reservation_id
   );
- 
+
   if (!reservationId) {
     return next({
       status: 404,
@@ -118,6 +118,7 @@ async function tableNotOccupied(req, res, next) {
 
   if (table.reservation_id) {
     res.locals.table = table;
+    res.locals.reservation_id = table.reservation_id;
     return next();
   }
   return next({
@@ -149,16 +150,14 @@ async function update(req, res) {
 
 async function destroy(req, res) {
   const tabId = req.params.table_id;
-  
+  const resIdOnTable = res.locals.reservation_id;
+
   const tableToUpdate = res.locals.table;
 
-  await reservationsService.updateStatus(
-    Number(req.body.data.reservation_id),
-    "finished"
-  );
+  await reservationsService.updateStatus(Number(resIdOnTable), "finished"); // 2 args
 
   tableToUpdate.reservation_id = null;
-  await tablesService.update(tableToUpdate);
+  await tablesService.update(tableToUpdate); // obj
   res.sendStatus(200).json(`table_id: ${tabId} is now free`);
 }
 

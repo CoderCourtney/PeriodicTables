@@ -4,7 +4,7 @@ import TableRow from "./TableRow";
 // import { Link } from "react-router-dom";
 
 // DASHBOARD IS PARENT
-export default function TableDisplay({ tables, loadDasboard, setTables }) {
+export default function TableDisplay({ tables, loadDasboard, setTables, date }) {
   const tablesJSX = (loadDashboard) => {
     return tables.map((table) => (
       <TableRow
@@ -13,6 +13,7 @@ export default function TableDisplay({ tables, loadDasboard, setTables }) {
         loadDashboard={loadDashboard}
         tables={tables}
         setTables={setTables}
+        date={date}
       />
     ));
   };

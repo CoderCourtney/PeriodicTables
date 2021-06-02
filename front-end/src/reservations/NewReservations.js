@@ -38,6 +38,7 @@ export default function NewReservation({ loadDashboard }) {
         .then(() =>
           history.push(`/dashboard?date=${formData.reservation_date}`)
         )
+        .then(() => loadDashboard())
         .catch(setErrors);
     }
     // } else {
