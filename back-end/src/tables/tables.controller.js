@@ -97,7 +97,7 @@ async function tableIdExists(req, res, next) {
   const tableId = req.params.table_id;
 
   const table = await tablesService.read(tableId);
-  
+
   if (table) {
     res.locals.table = table;
     return next();
@@ -111,7 +111,8 @@ async function tableIdExists(req, res, next) {
 // DESTROY MIDDLEWARE 2 of 2
 async function tableNotOccupied(req, res, next) {
   const tableId = req.params.table_id;
-  const table = await tablesService.read(tableId);
+  const table = res.locals.table;
+  // const table = await tablesService.read(tableId);
 
   if (table.reservation_id) {
     res.locals.table = table;
@@ -119,7 +120,7 @@ async function tableNotOccupied(req, res, next) {
   }
   return next({
     status: 400,
-    message: "table_id is not occupied.",
+    message: `table_id: ${tableId} is not occupied`,
   });
 }
 
@@ -141,11 +142,19 @@ async function update(req, res) {
 
 async function destroy(req, res) {
   const tabId = req.params.table_id;
-  const resId = res.locals.table.reservation_id;
-  console.log("\n\n\n table_id, resId", tabId, resId)
-  // update the reservation status from booked
-  await tablesService.delete(resId);
-  res.sendStatus(200).json(`table_id: ${tabId} is occupied`);
+  // const resId = res.locals.table.reservation_id;
+  // console.log("\n\n\n table_id, resId", tabId, resId)
+  // update the reservation id to null to become free on the table
+  // const tableToUpdate = await tablesService.read(tabId);
+  const tableToUpdate = res.locals.table;
+
+  // if (!tableToUpdate.reservation_id) {
+  //   res.sendStatus(400).json(`table_id: ${tabId} is not occupied`);
+  //   return;
+  // }
+  tableToUpdate.reservation_id = null;
+  await tablesService.update(tableToUpdate);
+  res.sendStatus(200).json(`table_id: ${tabId} is now free`);
 }
 
 module.exports = {

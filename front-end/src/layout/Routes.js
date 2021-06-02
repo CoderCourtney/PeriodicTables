@@ -64,6 +64,7 @@ function Routes() {
           reservations={reservations}
           reservationsError={reservationsError}
           tables={tables}
+          setTables={setTables}
           tablesError={tablesError}
           loadDashboard={loadDashboard}
         />

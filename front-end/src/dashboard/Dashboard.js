@@ -4,8 +4,10 @@ import ErrorAlert from "../layout/ErrorAlert";
 import { useHistory } from "react-router-dom";
 import { previous, today, next } from "../utils/date-time";
 import ReservationsDisplay from "../reservations/ReservationsDisplay";
-import TableRow from "./TableRow";
+// import TableRow from "../tables/TableRow";
+import TableDisplay from "../tables/TableDisplay";
 
+// ROUTES IS PARENT
 /**
  * Defines the dashboard page.
  * @param date
@@ -17,6 +19,7 @@ function Dashboard({
   reservations,
   reservationsError,
   tables,
+  setTables,
   tablesError,
   loadDashboard,
 }) {
@@ -31,16 +34,6 @@ function Dashboard({
   //     />
   //   ));
   // };
-
-  const tablesJSX = () => {
-    return tables.map((table) => (
-      <TableRow
-        key={table.table_id}
-        table={table}
-        loadDashboard={loadDashboard}
-      />
-    ));
-  };
 
   // function handleClick({ target }) {
   //   let newDate;
@@ -120,17 +113,7 @@ function Dashboard({
 
       <h4 className="mb-0">Tables</h4>
       <ErrorAlert error={tablesError} />
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Table Name</th>
-            <th scope="col">Capacity</th>
-            <th scope="col">Status</th>
-          </tr>
-        </thead>
-        <tbody>{tablesJSX()}</tbody>
-      </table>
+      <TableDisplay tables={tables} loadDashboard={loadDashboard} setTables={setTables}/>
     </main>
   );
 }

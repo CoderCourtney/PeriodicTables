@@ -126,6 +126,16 @@ export async function createTable(table, signal) {
   return await fetchJson(url, options, []);
 }
 
+export async function deleteOnFinish(tableId, signal) {
+  const url = `${API_BASE_URL}/tables/${tableId}/seat`;
+  const options = {
+    method: "DELETE",
+    headers,
+    signal,
+  };
+  return await fetch(url, options);
+}
+
 // export async function createTable(table, signal) {
 //   const url = `${API_BASE_URL}/tables`;
 
