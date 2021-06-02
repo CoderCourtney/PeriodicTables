@@ -32,13 +32,14 @@ function isPast(date) {
   const temp = date.split("-");
   const newDate = new Date(
     Number(temp[0]),
-    Number(temp[1]) - 1, // indexing for the months 
+    Number(temp[1]) - 1, // indexing for the months
     Number(temp[2]) + 1
   );
 
   return newDate.getTime() < new Date().getTime();
 }
 
+// CREATE MIDDLEWARE
 function hasValidFields(req, res, next) {
   const { data = {} } = req.body;
 
@@ -60,22 +61,13 @@ function hasValidFields(req, res, next) {
         "Invalid data format provided. Requires {string: [first_name, last_name, mobile_number], date: reservation_date, time: reservation_time, number: people}",
     });
   }
-  // console.log("data", data);
+ 
   const reserveDate = new Date(
     data.reservation_date
-    // `${data.reservation_date} ${data.reservation_test} GMT-0500`
   );
-  //   start = new Date(data.reservation_date),
-  //   end = new Date(`${data.reservation_date} 21:30:00`);
-  // start.setHours(10);
-  // start.setMinutes(30);
+ 
   const todaysDate = new Date();
-  // console.log("getDay", reserveDate.getDay());
-  // console.log("reserveDate", reserveDate);
-  // console.log("todaysDate", todaysDate);
-
-  // const tableStatus = new Map(table.status);
-
+ 
   if (typeof data.people !== "number") {
     return next({
       status: 400,
@@ -110,12 +102,6 @@ function hasValidFields(req, res, next) {
       message: "reservation_time is not a time.",
     });
   }
-  // let [hours, minutes] = data.reservation_time.split(":");
-  // reserveDate.setHours(hours);
-  // reserveDate.setMinutes(minutes);
-  // console.log("startTime", start);
-  // console.log("endTime", end);
-  // console.log("reserveDate.getTime", reserveDate);
 
   if (data.reservation_time < "10:30" || data.reservation_time > "21:30") {
     return next({
@@ -124,20 +110,20 @@ function hasValidFields(req, res, next) {
     });
   }
 
-  // if (status === "seated" || status === "finished") {
-  //   return next({
-  //     status: 400,
-  //     message: "reservation is seated or complete",
-  //   });
-  // }
+  if (data.status === "seated" || data.status === "finished") {
+    return next({
+      status: 400,
+      message: "reservation is seated or finished",
+    });
+  }
 
   next();
 }
 
+// READ MIDDLEWARE AND FOR UPDATE
 async function reservationExists(req, res, next) {
   const reservationId = req.params.reservation_id;
   const reservation = await service.read(req.params.reservation_id);
-  // console.log("res", reservation);
   if (reservation) {
     res.locals.reservation = reservation;
     next();
@@ -147,6 +133,30 @@ async function reservationExists(req, res, next) {
       message: `Reservation id does not exist: ${reservationId}`,
     });
   }
+}
+
+// UPDATE MIDDLEWARE 2 of 3 after passing reservationExists
+async function reservationStatusFinished(req, res, next) {
+  const status = res.locals.reservation.status;
+  if (status === "finished") {
+    return next({
+      status: 400,
+      message: "reservation is currently finished",
+    });
+  }
+  return next();
+}
+
+// UPDATE MIDDLEWARE 3 of 3
+async function reservationStatus(req, res, next) {
+  const status = req.body.data.status;
+  if (!["finished", "seated", "cancelled", "booked"].includes(status)) {
+    return next({
+      status: 400,
+      message: "reservation has an unknown status",
+    });
+  }
+  return next();
 }
 
 async function read(req, res) {
@@ -167,8 +177,25 @@ async function create(req, res) {
   res.status(201).json({ data: createdRestaurant });
 }
 
+async function updateStatus(req, res) {
+  const resId = req.params.reservation_id
+  const status = req.body.data.status
+
+  const data = await service.updateStatus(resId, status);
+  res.status(200).json({ data });
+}
+
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [hasValidFields, asyncErrorBoundary(create)],
-  read: [asyncErrorBoundary(reservationExists), read],
+  read: [
+    asyncErrorBoundary(reservationExists),
+    read,
+  ],
+  updateStatus: [
+    asyncErrorBoundary(reservationExists),
+    asyncErrorBoundary(reservationStatusFinished),
+    asyncErrorBoundary(reservationStatus),
+    asyncErrorBoundary(updateStatus),
+  ],
 };

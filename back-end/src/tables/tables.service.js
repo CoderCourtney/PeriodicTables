@@ -18,35 +18,18 @@ function read(table_id) {
 }
 
 //    PUT /tables/:table_id/seat
-// function update(updatedTable) {
-//   return knex(tableName)
-//     .select("*")
-//     .where({ reservation_id: updatedTable.reservation_id })
-//     .update(updatedTable, "*");
-// }
-
 function update(updatedTable) {
   return knex(tableName)
     .where({ table_id: updatedTable.table_id })
-    .update(updatedTable, "*");
+    .update(updatedTable, "*")
+    .returning("*")
+    .then((updatedTab) => updatedTab[0]);
 }
 
-// function update(updatedTable) {
-//   return knex(tableName)
-//     .where({ reservation_id: updatedTable.reservation_id })
-//     .update(updatedTable, "*")
-//     .then(() => {
-//       return knex("reservations")
-//         .select("*")
-//         .where({ reservation_id: reservations.reservation_id })
-//         .first();
-//     });
-// }
 
 function destroy(resId) {
   return knex(tableName).where({ reservation_id: null }).del();
 }
-
 // table_id
 // reservation_id -null -id
 
@@ -57,17 +40,3 @@ module.exports = {
   update,
   delete: destroy,
 };
-
-// return knex.schema.createTable("tables", (table) => {
-//     table.increments("table_id").primary().notNullable();
-//     table.string("table_name").notNullable();
-//     table.integer("capacity").notNullable();
-//     table.string("status").defaultTo("free").notNullable();
-//     table.integer("reservation_id").unsigned();
-//     table
-//       .foreign("reservation_id")
-//       .references("reservation_id")
-//       .inTable("reservations")
-//       .onDelete("SET NULL");
-//     table.timestamps(true, true);
-//   });

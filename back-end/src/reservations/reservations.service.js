@@ -6,21 +6,39 @@ function list(reservation_date) {
   return knex(tableName)
     .select("*")
     .where({ reservation_date })
+    .whereNot({ status: "finished" })
     .orderBy("reservation_time", "asc");
 }
 
-function create(newRestaurant) {
+function create(newRes) {
   return knex(tableName)
-    .insert(newRestaurant, "*")
-    .then((createdRestaurant) => createdRestaurant[0]);
+    .insert(newRes, "*")
+    .then((createdRes) => createdRes[0]);
 }
 
 function read(reservation_id) {
   return knex(tableName).where({ reservation_id }).first();
 }
 
+function updateStatus(reservation_id, status) {
+  return knex(tableName)
+    .where({ reservation_id }) // obj to update
+    .update("status", status)
+    .returning("*")
+    .then((updatedRes) => updatedRes[0]);
+}
+
+// function updateStatus(updatedRes) {
+//   return knex(tableName)
+//     .where({ reservation_id: updatedRes.reservation_id })
+//     .update(updatedRes, "*")
+//     .returning("*")
+//     .then((createdRes) => createdRes[0]);
+// }
+
 module.exports = {
   create,
   list,
   read,
+  updateStatus,
 };

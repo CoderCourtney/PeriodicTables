@@ -11,10 +11,6 @@ async function list(req, res) {
 // CREATE MIDDLEWARE VALIDATION HELPER FUNCTION
 function tableValidator(data, validFields) {
   // returns an array of fields that are invalid
-  // not-nullable fields
-  // Table name: <input name="table_name" />, which must be at least 2 characters long.
-  // Capacity: <input name="capacity" />, this is the number of people that can be seated
-  // at the table, which must be at least 1 person.
   const fieldsNotValid = [];
 
   if (!data.table_name || data.table_name.length < 2) {
@@ -70,6 +66,7 @@ async function validateToSeatTable(req, res, next) {
   const reservationId = await reservationsService.read(
     req.body.data.reservation_id
   );
+ 
   if (!reservationId) {
     return next({
       status: 404,
@@ -87,6 +84,12 @@ async function validateToSeatTable(req, res, next) {
     return next({
       status: 400,
       message: `Table does not have sufficient capacity`,
+    });
+  }
+  if (reservationId.status === "seated") {
+    return next({
+      status: 400,
+      message: `reservation is already seated`,
     });
   }
   next();
@@ -112,7 +115,6 @@ async function tableIdExists(req, res, next) {
 async function tableNotOccupied(req, res, next) {
   const tableId = req.params.table_id;
   const table = res.locals.table;
-  // const table = await tablesService.read(tableId);
 
   if (table.reservation_id) {
     res.locals.table = table;
@@ -133,8 +135,13 @@ async function create(req, res) {
 async function update(req, res) {
   const updatedTable = {
     ...res.locals.table,
-    reservation_id: req.body.data.reservation_id,
+    reservation_id: Number(req.body.data.reservation_id),
   };
+  // parking the resId on the table now that it is seated
+  await reservationsService.updateStatus(
+    Number(req.body.data.reservation_id),
+    "seated"
+  );
 
   const data = await tablesService.update(updatedTable);
   res.status(200).json({ data });
@@ -142,16 +149,14 @@ async function update(req, res) {
 
 async function destroy(req, res) {
   const tabId = req.params.table_id;
-  // const resId = res.locals.table.reservation_id;
-  // console.log("\n\n\n table_id, resId", tabId, resId)
-  // update the reservation id to null to become free on the table
-  // const tableToUpdate = await tablesService.read(tabId);
+  
   const tableToUpdate = res.locals.table;
 
-  // if (!tableToUpdate.reservation_id) {
-  //   res.sendStatus(400).json(`table_id: ${tabId} is not occupied`);
-  //   return;
-  // }
+  await reservationsService.updateStatus(
+    Number(req.body.data.reservation_id),
+    "finished"
+  );
+
   tableToUpdate.reservation_id = null;
   await tablesService.update(tableToUpdate);
   res.sendStatus(200).json(`table_id: ${tabId} is now free`);
