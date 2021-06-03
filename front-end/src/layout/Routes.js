@@ -6,7 +6,7 @@ import Dashboard from "../dashboard/Dashboard";
 import NotFound from "./NotFound";
 import { today } from "../utils/date-time";
 import NewReservation from "../reservations/NewReservations";
-import { listReservations, listTables } from "../utils/api";
+import { listReservations, listTables, cancelStatus } from "../utils/api";
 import SeatReservation from "../reservations/SeatReservation";
 import NewTable from "../tables/NewTable";
 import Search from "../search/Search";
@@ -33,6 +33,13 @@ function Routes() {
     const abortController = new AbortController();
     setReservationsError(null);
     listReservations({ date }, abortController.signal)
+      // .then((reservations) => {
+      //   return reservations.filter((reservation) => {
+      //     return (
+      //       reservation.status === "booked" && reservation.status === "seated"
+      //     );
+      //   });
+      // })
       .then(setReservations)
       .catch(setReservationsError);
     listTables()
@@ -48,6 +55,22 @@ function Routes() {
     return () => abortController.abort();
   }
 
+function onCancel(reservation_id) {
+  const abortController = new AbortController();
+  cancelStatus(reservation_id, abortController.signal)
+        .then(loadDashboard)
+        // .then((updatedRes) =>
+        //   history.push(
+        //     `/dashboard?date=${new Date(updatedRes.reservation_date)
+        //       .toISOString()
+        //       .substr(0, 10)}`
+        //   )
+        // )
+        .catch(setReservationsError);
+  
+    return () => abortController.abort();
+  }
+
   return (
     <Switch>
       <Route exact={true} path="/">
@@ -57,7 +80,7 @@ function Routes() {
         <Redirect to={"/dashboard"} />
       </Route>
       <Route exact={true} path="/reservations/new">
-        <NewReservation loadDashboard={loadDashboard} />
+        <NewReservation loadDashboard={loadDashboard} createOrEdit={"create"} />
       </Route>
       <Route path="/dashboard">
         <Dashboard
@@ -68,7 +91,11 @@ function Routes() {
           setTables={setTables}
           tablesError={tablesError}
           loadDashboard={loadDashboard}
+          onCancel={onCancel}
         />
+      </Route>
+      <Route exact={true} path="/reservations/:reservation_id/edit">
+        <NewReservation loadDashboard={loadDashboard} createOrEdit={"edit"} />
       </Route>
       <Route exact={true} path="/reservations/:reservation_id/seat">
         <SeatReservation

@@ -124,3 +124,41 @@ export default function SeatReservation({
     </div>
   );
 }
+
+
+///////////// TA
+
+
+// function finish(table) {
+//   return knex.transaction(async (transaction) => {
+//     await knex("reservations")
+//       .where({ reservation_id: table.reservation_id })
+//       .update({ status: "finished" })
+//       .transacting(transaction);
+//     return knex("tables")
+//       .where({ table_id: table.table_id })
+//       .update({ reservation_id: null }, "*")
+//       .transacting(transaction)
+//       .then((records) => records[0]);
+//   });
+// }
+
+// function finishHandler({
+//   target: { dataset: { tableIdFinish, reservationIdFinish } } = {},
+// }) {
+//   if (
+//     tableIdFinish &&
+//     reservationIdFinish &&
+//     window.confirm(
+//       "Is this table ready to seat new guests?\n\nThis cannot be undone."
+//     )
+//   ) {
+//     onFinish(tableIdFinish, reservationIdFinish);
+//   }
+// }
+
+// function onFinish(table_id, reservation_id) {
+//   finishTable(table_id, reservation_id)
+//     .then(loadDashboard)
+//     .catch(setTablesError);
+// }

@@ -1,5 +1,5 @@
 const puppeteer = require("puppeteer");
-const { setDefaultOptions } = require('expect-puppeteer');
+const { setDefaultOptions } = require("expect-puppeteer");
 const fs = require("fs");
 const fsPromises = fs.promises;
 
@@ -69,7 +69,6 @@ describe("US-01 - Create and list reservations - E2E", () => {
       const [cancelButton] = await page.$x(
         "//button[contains(translate(., 'ACDEFGHIJKLMNOPQRSTUVWXYZ', 'acdefghijklmnopqrstuvwxyz'), 'cancel')]"
       );
-
       if (!cancelButton) {
         throw new Error("button containing cancel not found.");
       }
@@ -83,12 +82,10 @@ describe("US-01 - Create and list reservations - E2E", () => {
         cancelButton.click(),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
       ]);
-
       await page.screenshot({
         path: ".screenshots/us-01-cancel-after.png",
         fullPage: true,
       });
-
       expect(page.url()).toContain("/dashboard");
     });
   });

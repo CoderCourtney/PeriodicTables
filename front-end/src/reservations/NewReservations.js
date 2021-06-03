@@ -1,10 +1,14 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { createReservation, formatPhoneNumber } from "../utils/api";
+import React, { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import {
+  createReservation,
+  formatPhoneNumber,
+  readReservation,
+} from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { today } from "../utils/date-time";
 
-export default function NewReservation({ loadDashboard }) {
+export default function NewReservation({ loadDashboard, createOrEdit }) {
   const [errors, setErrors] = useState(null);
   const history = useHistory();
   const [formData, setFormData] = useState({
@@ -15,6 +19,35 @@ export default function NewReservation({ loadDashboard }) {
     reservation_time: "",
     people: 0,
   });
+  const { reservation_id } = useParams();
+
+  useEffect(() => {
+    const abortController = new AbortController();
+    if (reservation_id) {
+      readReservation(reservation_id, abortController.signal)
+        // .then((foundRes) => {
+        //   let resDate = new Date(foundRes.reservation_date).toISOString().substr(0, 10);
+        //   console.log(foundRes.reservation_date, resDate);
+        //   return foundRes;
+        // })
+        .then((foundRes) =>
+          setFormData({
+            first_name: foundRes.first_name,
+            last_name: foundRes.last_name,
+            mobile_number: foundRes.mobile_number,
+            reservation_date: new Date(foundRes.reservation_date)
+              .toISOString()
+              .substr(0, 10),
+            reservation_time: foundRes.reservation_time,
+            people: foundRes.people,
+          })
+        )
+        .catch(setErrors);
+    }
+    return () => abortController.abort();
+  }, [reservation_id]);
+
+  // console.log(formData);
 
   function handleChange({ target }) {
     setFormData({ ...formData, [target.name]: target.value });
@@ -31,8 +64,8 @@ export default function NewReservation({ loadDashboard }) {
   function handleSubmit(event) {
     event.preventDefault();
     setErrors(null);
+
     const valid = validateDate();
-    // console.log("\n\n\n errors", errors);
     if (valid) {
       createReservation(formData)
         .then(() => loadDashboard())
@@ -41,21 +74,12 @@ export default function NewReservation({ loadDashboard }) {
         )
         .catch(setErrors);
     }
-    // } else {
-    //   const errorMessage = { message: `${foundErrors.join(",").trim()}` };
-    //   setErrors(errorMessage);
-    // }
   }
-  // console.log("\n\n\n");
-  // console.log(Date().toLocaleString());
 
   const validateDate = () => {
     const errorsArray = [];
-    // const today = new Date();
     const reservationDate = new Date(formData.reservation_date);
-    // console.log("\n\n\n reservation date", reservationDate);
     const reservationTime = formData.reservation_time;
-    // const currentDateTime = Date().toLocaleString();
 
     //1 equals tuesday
     if (reservationDate.getDay() === 1) {
@@ -133,6 +157,8 @@ export default function NewReservation({ loadDashboard }) {
             id="reservation_date"
             type="date"
             className="form-control"
+            placeholder="MM/DD/YYYY"
+            pattern="\d{4}-\d{2}-\d{2}"
             onChange={handleChange}
             value={formData.reservation_date}
             required
@@ -166,105 +192,22 @@ export default function NewReservation({ loadDashboard }) {
             required
           />
         </div>
+
         <button type="submit" className="btn btn-primary">
           Submit
+          {/* {createOrEdit === "edit" ? "Save" : "Submit"} */}
         </button>
         <button
           type="button"
           className="btn btn-danger"
-          onClick={() => history.goBack()}
+          onClick={history.goBack}
         >
           Cancel
         </button>
+        {/* <button onClick={() => history.goBack()} className="btn btn-danger">
+          Cancel
+        </button> */}
       </form>
     </div>
   );
 }
-
-//// AM
-// function isTuesday(date) {
-//   const temp = date.split("-");
-//   const newDate = new Date(
-//     Number(temp[0]),
-//     Number(temp[1]) - 1,
-//     Number(temp[2])
-//   );
-//   return newDate.getDay() === 2;
-// }
-// function isPast(date) {
-//   const temp = date.split("-");
-//   const newDate = new Date(
-//     Number(temp[0]),
-//     Number(temp[1]) - 1,
-//     Number(temp[2]) + 1
-//   );
-
-//   return newDate.getTime() < new Date().getTime();
-// }
-// function isTimeOpen(time) {
-//   const timeArr = time.split(":");
-//   const hour = Number(timeArr[0]);
-//   const min = Number(timeArr[1]);
-//   if (hour >= 10) {
-//     if (hour === 10 && min < 30) {
-//       return false;
-//     }
-//     if (hour >= 21) {
-//       if (hour === 21 && min <= 30) {
-//         return true;
-//       }
-//       return false;
-//     }
-//     return true;
-//   }
-//   return false;
-// }
-
-// function isTimeValid(time, date) {
-//   if (date === today()) {
-//     const now = new Date();
-//     const timeArr = time.split(":");
-//     const hour = Number(timeArr[0]);
-//     const min = Number(timeArr[1]);
-//     if (now.getHours() >= hour) {
-//       if (now.getHours() == hour) {
-//         if (now.getMinutes() < min) {
-//           return true;
-//         }
-//         return false;
-//       }
-//     }
-//   }
-//   return true;
-// }
-
-// function validateDate() {
-//   let message = "";
-
-//   if (/\d{4}-\d{2}-\d{2}/.test(formData.reservation_date)) {
-//     if (isTuesday(formData.reservation_date)) {
-//       message += "  /closed Tuesdays";
-//     }
-//     if (isPast(formData.reservation_date)) {
-//       message += " /Must be in future";
-//     }
-//   } else {
-//     message += "reservation_date must be a date";
-//   }
-//   if (/[0-9]{2}:[0-9]{2}/.test(formData.reservation_time)) {
-//     if (!isTimeOpen(formData.reservation_time)) {
-//       message += "  /closed only open 10:30 AM - 10:30 PM with 1hr window ";
-//     }
-//     if (!isTimeValid(formData.reservation_time, formData.reservation_date)) {
-//       message += "/ Must be in future ";
-//     }
-//   } else {
-//     message += "reservation_time must be a time ";
-//   }
-//   if (message.length) {
-//     setErrors(new Error(message));
-//     return true;
-//   } else {
-//     return false;
-//   }
-// }

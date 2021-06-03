@@ -22,6 +22,7 @@ function Dashboard({
   setTables,
   tablesError,
   loadDashboard,
+  onCancel,
 }) {
   const history = useHistory();
 
@@ -93,7 +94,11 @@ function Dashboard({
         Next
       </button>
       <ErrorAlert error={reservationsError} />
-      <ReservationsDisplay reservations={reservations} loadDashboard={loadDashboard}/>
+      <ReservationsDisplay
+        reservations={reservations}
+        loadDashboard={loadDashboard}
+        onCancel={onCancel}
+      />
 
       {/* <table class="table">
         <thead>
@@ -113,7 +118,12 @@ function Dashboard({
 
       <h4 className="mb-0">Tables</h4>
       <ErrorAlert error={tablesError} />
-      <TableDisplay date={date }tables={tables} loadDashboard={loadDashboard} setTables={setTables}/>
+      <TableDisplay
+        date={date}
+        tables={tables}
+        loadDashboard={loadDashboard}
+        setTables={setTables}
+      />
     </main>
   );
 }

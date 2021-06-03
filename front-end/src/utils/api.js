@@ -138,6 +138,17 @@ export async function deleteOnFinish(tableId, signal) {
   return await fetch(url, options);
 }
 
+export async function cancelStatus(resId, signal) {
+  const url = `${API_BASE_URL}/reservations/${resId}/status`;
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({data: { status: "cancelled" } }),
+    signal,
+  };
+  return await fetchJson(url, options, []);
+}
+
 // export async function createTable(table, signal) {
 //   const url = `${API_BASE_URL}/tables`;
 

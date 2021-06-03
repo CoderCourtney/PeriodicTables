@@ -46,7 +46,7 @@ function isPast(date) {
 
 // variable.getTime() < new Date().getTime
 
-// CREATE MIDDLEWARE
+// CREATE MIDDLEWARE & UPDATE 2 of 3
 function hasValidFields(req, res, next) {
   const { data = {} } = req.body;
 
@@ -141,7 +141,7 @@ async function reservationExists(req, res, next) {
   }
 }
 
-// UPDATE MIDDLEWARE 2 of 3 after passing reservationExists
+// UPDATE STATUS MIDDLEWARE 2 of 3 after passing reservationExists
 async function reservationStatusFinished(req, res, next) {
   const status = res.locals.reservation.status;
   if (status === "finished") {
@@ -153,13 +153,26 @@ async function reservationStatusFinished(req, res, next) {
   return next();
 }
 
-// UPDATE MIDDLEWARE 3 of 3
+// UPDATE STATUS MIDDLEWARE 3 of 3
 async function reservationStatus(req, res, next) {
   const status = req.body.data.status;
   if (!["finished", "seated", "cancelled", "booked"].includes(status)) {
     return next({
       status: 400,
       message: "reservation has an unknown status",
+    });
+  }
+  return next();
+}
+
+// UPDATE MIDDLEWARE 3 of 3
+async function onlyIfBooked(req, res, next) {
+  const status = req.body.data.status;
+  const reservationId = req.params.reservation_id;
+  if (status !== "booked") {
+    return next({
+      status: 400,
+      message: `The reservation_id ${reservationId} status is not booked.`,
     });
   }
   return next();
@@ -191,6 +204,14 @@ async function updateStatus(req, res) {
   res.status(200).json({ data });
 }
 
+async function update(req, res) {
+  const updatedReservation = req.body.data;
+  const resId = req.params.reservation_id;
+
+  const data = await service.update(updatedReservation, resId);
+  res.status(200).json({ data });
+}
+
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [hasValidFields, asyncErrorBoundary(create)],
@@ -200,5 +221,11 @@ module.exports = {
     asyncErrorBoundary(reservationStatusFinished),
     asyncErrorBoundary(reservationStatus),
     asyncErrorBoundary(updateStatus),
+  ],
+  update: [
+    asyncErrorBoundary(reservationExists),
+    hasValidFields,
+    asyncErrorBoundary(onlyIfBooked),
+    asyncErrorBoundary(update),
   ],
 };
