@@ -5,7 +5,8 @@ import TableRow from "./TableRow";
 
 // DASHBOARD IS PARENT
 export default function TableDisplay({ tables, loadDasboard, setTables, date }) {
-  const tablesJSX = (loadDashboard) => {
+
+    const tablesJSX = (loadDashboard) => {
     return tables.map((table) => (
       <TableRow
         key={table.table_id}
@@ -33,3 +34,5 @@ export default function TableDisplay({ tables, loadDasboard, setTables, date }) 
     </div>
   );
 }
+
+

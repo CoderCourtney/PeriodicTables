@@ -35,10 +35,10 @@ export default function NewReservation({ loadDashboard }) {
     // console.log("\n\n\n errors", errors);
     if (valid) {
       createReservation(formData)
+        .then(() => loadDashboard())
         .then(() =>
           history.push(`/dashboard?date=${formData.reservation_date}`)
         )
-        .then(() => loadDashboard())
         .catch(setErrors);
     }
     // } else {

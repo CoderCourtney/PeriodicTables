@@ -22,7 +22,8 @@ export default function TableRow({ table, tables, setTables, date }) {
         )
         .then(() => listTables())
         .then(setTables)
-        .then(() => listReservations({ date }, abortController.signal))
+        .then(() => history.go(0))
+        // .then(() => listReservations({ date }, abortController.signal))
         .catch();
     }
     return () => abortController.abort();

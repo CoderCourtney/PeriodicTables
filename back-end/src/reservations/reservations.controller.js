@@ -20,6 +20,7 @@ const validFields = [
   "people",
 ];
 
+// HELPER FN
 function notNull(obj) {
   for (let key in obj) {
     if (!obj[key]) return false;
@@ -38,6 +39,8 @@ function isPast(date) {
 
   return newDate.getTime() < new Date().getTime();
 }
+
+// variable.getTime() < new Date().getTime
 
 // CREATE MIDDLEWARE
 function hasValidFields(req, res, next) {
@@ -66,7 +69,7 @@ function hasValidFields(req, res, next) {
     data.reservation_date
   );
  
-  const todaysDate = new Date();
+  // const todaysDate = new Date();
  
   if (typeof data.people !== "number") {
     return next({
@@ -89,6 +92,7 @@ function hasValidFields(req, res, next) {
         "Reservations cannot be made on a Tuesday, the restaurant is closed.",
     });
   }
+
   if (isPast(data.reservation_date)) {
     return next({
       status: 400,
