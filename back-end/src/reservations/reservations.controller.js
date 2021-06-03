@@ -7,8 +7,12 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
  */
 
 async function list(req, res) {
-  const { date } = req.query;
-  res.json({ data: await service.list(date) });
+  if (req.query.mobile_number) {
+    return res.json({ data: await service.search(req.query.mobile_number) });
+  }
+  if (req.query.date) {
+    return res.json({ data: await service.list(req.query.date) });
+  }
 }
 
 const validFields = [
@@ -64,13 +68,11 @@ function hasValidFields(req, res, next) {
         "Invalid data format provided. Requires {string: [first_name, last_name, mobile_number], date: reservation_date, time: reservation_time, number: people}",
     });
   }
- 
-  const reserveDate = new Date(
-    data.reservation_date
-  );
- 
+
+  const reserveDate = new Date(data.reservation_date);
+
   // const todaysDate = new Date();
- 
+
   if (typeof data.people !== "number") {
     return next({
       status: 400,
@@ -182,8 +184,8 @@ async function create(req, res) {
 }
 
 async function updateStatus(req, res) {
-  const resId = req.params.reservation_id
-  const status = req.body.data.status
+  const resId = req.params.reservation_id;
+  const status = req.body.data.status;
 
   const data = await service.updateStatus(resId, status);
   res.status(200).json({ data });
@@ -192,10 +194,7 @@ async function updateStatus(req, res) {
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [hasValidFields, asyncErrorBoundary(create)],
-  read: [
-    asyncErrorBoundary(reservationExists),
-    read,
-  ],
+  read: [asyncErrorBoundary(reservationExists), read],
   updateStatus: [
     asyncErrorBoundary(reservationExists),
     asyncErrorBoundary(reservationStatusFinished),
