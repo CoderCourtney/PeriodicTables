@@ -8,19 +8,19 @@ Thanks for checking out my Restaurant Reservation App! Built with the following:
 
 ### DASHBOARD
 
-![Dashboard with Table & Buttons](../images/dashboard-table.png)
+![Dashboard with Table & Buttons](./images/dashboard-table.png)
 
 ### NEW RESERVATION FORM
 
-![New Reservation Form](../images/new-reservation-form.png)
+![New Reservation Form](./images/new-reservation-form.png)
 
 ### RESERVATION DISPLAYED ON THE DISPLAY
 
-![New Reservation Form](../images/reservation-displayed-dashboard-with-table.png)
+![New Reservation Form](./images/reservation-displayed-dashboard-with-table.png)
 
 ### OCCUPIED TABLE & FINISH BUTTON ON TABLE
 
-![New Reservation Form](../images/occupied-finishButton.png)
+![New Reservation Form](./images/occupied-finishButton.png)
 
 # API Documentation
 
