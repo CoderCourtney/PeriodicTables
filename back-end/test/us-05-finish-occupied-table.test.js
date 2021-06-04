@@ -33,7 +33,7 @@ describe("US-05 - Finish an occupied table", () => {
         .delete("/tables/99/seat")
         .set("Accept", "application/json")
         .send({ datum: {} });
-
+    
       expect(response.body.error).toContain("99");
       expect(response.status).toBe(404);
     });
@@ -62,7 +62,7 @@ describe("US-05 - Finish an occupied table", () => {
       const finishResponse = await request(app)
         .delete(`/tables/${tableOne.table_id}/seat`)
         .set("Accept", "application/json");
-
+      
       expect(finishResponse.body.error).toBeUndefined();
       expect(finishResponse.status).toBe(200);
     });
