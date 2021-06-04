@@ -14,13 +14,9 @@ Thanks for checking out my Restaurant Reservation App! Built with the following:
 
 ![New Reservation Form](./images/new-reservation-form.png)
 
-### RESERVATION DISPLAYED ON THE DISPLAY
+### RESERVATION ON DISPLAY, OCCUPIED TABLE & FINISH BUTTON ON TABLE
 
 ![New Reservation Form](./images/reservation-displayed-dashboard-with-table.png)
-
-### OCCUPIED TABLE & FINISH BUTTON ON TABLE
-
-![New Reservation Form](./images/occupied-finishButton.png)
 
 # API Documentation
 
