@@ -24,7 +24,6 @@ function Routes() {
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
   const query = useQuery();
-  // const date = query.get("date");
   const date = query.get("date") ? query.get("date") : today();
 
   useEffect(loadDashboard, [date]);
@@ -33,20 +32,12 @@ function Routes() {
     const abortController = new AbortController();
     setReservationsError(null);
     listReservations({ date }, abortController.signal)
-      // .then((reservations) => {
-      //   return reservations.filter((reservation) => {
-      //     return (
-      //       reservation.status === "booked" && reservation.status === "seated"
-      //     );
-      //   });
-      // })
       .then(setReservations)
       .catch(setReservationsError);
     listTables()
       .then((existingTables) => {
         const updatedExistingTables = existingTables.map((table) => {
           return { ...table };
-          // return { ...table, status: "free" };
         });
         return updatedExistingTables;
       })
@@ -59,13 +50,6 @@ function onCancel(reservation_id) {
   const abortController = new AbortController();
   cancelStatus(reservation_id, abortController.signal)
         .then(loadDashboard)
-        // .then((updatedRes) =>
-        //   history.push(
-        //     `/dashboard?date=${new Date(updatedRes.reservation_date)
-        //       .toISOString()
-        //       .substr(0, 10)}`
-        //   )
-        // )
         .catch(setReservationsError);
   
     return () => abortController.abort();

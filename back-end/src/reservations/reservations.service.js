@@ -2,6 +2,7 @@ const knex = require("../db/connection");
 
 const tableName = "reservations";
 
+// GET route("/")
 function list(reservation_date) {
   return knex(tableName)
     .select("*")
@@ -10,16 +11,19 @@ function list(reservation_date) {
     .orderBy("reservation_time", "asc");
 }
 
+// POST route("/")
 function create(newRes) {
   return knex(tableName)
     .insert(newRes, "*")
     .then((createdRes) => createdRes[0]);
 }
 
+// GET "/:reservation_id"
 function read(reservation_id) {
   return knex(tableName).where({ reservation_id }).first();
 }
 
+// PUT "/:reservation_id/status"
 function updateStatus(reservation_id, status) {
   return knex(tableName)
     .where({ reservation_id }) // obj to update
@@ -28,13 +32,7 @@ function updateStatus(reservation_id, status) {
     .then((updatedRes) => updatedRes[0]);
 }
 
-// function updateStatus(updatedRes) {
-//   return knex(tableName)
-//     .where({ reservation_id: updatedRes.reservation_id })
-//     .update(updatedRes, "*")
-//     .returning("*")
-//     .then((createdRes) => createdRes[0]);
-// }
+// GET LIST using mobile_number
 function search(mobile_number) {
   return knex("reservations")
     .whereRaw(
@@ -44,7 +42,7 @@ function search(mobile_number) {
     .orderBy("reservation_date");
 }
 
-// EDIT
+// PUT "/:reservation_id" FOR EDIT 
 function update(updatedReservation, resId) {
   return knex(tableName)
     .where({ reservation_id: resId })

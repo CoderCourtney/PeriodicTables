@@ -1,11 +1,11 @@
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
-// const reservationValidator = require("../Utils/reservationValidator")
 
 /**
  * List handler for reservation resources
  */
 
+// LIST
 async function list(req, res) {
   if (req.query.mobile_number) {
     return res.json({ data: await service.search(req.query.mobile_number) });
@@ -15,6 +15,7 @@ async function list(req, res) {
   }
 }
 
+// VALIDATION FUNCTION hasValidFields SUPPORT
 const validFields = [
   "first_name",
   "last_name",
@@ -24,7 +25,7 @@ const validFields = [
   "people",
 ];
 
-// HELPER FN
+// HELPER FN FOR hasValidFields SUPPORT
 function notNull(obj) {
   for (let key in obj) {
     if (!obj[key]) return false;
@@ -32,21 +33,19 @@ function notNull(obj) {
   return true;
 }
 
-// HELPER FN
+// HELPER FN FOR hasValidFields SUPPORT
 function isPast(date) {
   const temp = date.split("-");
   const newDate = new Date(
     Number(temp[0]),
-    Number(temp[1]) - 1, // indexing for the months
+    Number(temp[1]) - 1,
     Number(temp[2]) + 1
   );
-
+  // indexing for the months etc.
   return newDate.getTime() < new Date().getTime();
 }
 
-// variable.getTime() < new Date().getTime
-
-// CREATE MIDDLEWARE & UPDATE 2 of 3
+// CREATE MIDDLEWARE 1 OF 1  &  UPDATE 2 of 3
 function hasValidFields(req, res, next) {
   const { data = {} } = req.body;
 
@@ -70,8 +69,6 @@ function hasValidFields(req, res, next) {
   }
 
   const reserveDate = new Date(data.reservation_date);
-
-  // const todaysDate = new Date();
 
   if (typeof data.people !== "number") {
     return next({
@@ -126,7 +123,7 @@ function hasValidFields(req, res, next) {
   next();
 }
 
-// READ MIDDLEWARE AND FOR UPDATE
+// READ MIDDLEWARE 1 OF 1  &  UPDATE STATUS 1 OF 3
 async function reservationExists(req, res, next) {
   const reservationId = req.params.reservation_id;
   const reservation = await service.read(req.params.reservation_id);
@@ -141,7 +138,7 @@ async function reservationExists(req, res, next) {
   }
 }
 
-// UPDATE STATUS MIDDLEWARE 2 of 3 after passing reservationExists
+// UPDATE STATUS MIDDLEWARE 2 OF 3 (after reservationExists 1st)
 async function reservationStatusFinished(req, res, next) {
   const status = res.locals.reservation.status;
   if (status === "finished") {
@@ -153,7 +150,7 @@ async function reservationStatusFinished(req, res, next) {
   return next();
 }
 
-// UPDATE STATUS MIDDLEWARE 3 of 3
+// UPDATE STATUS MIDDLEWARE 3 OF 3
 async function reservationStatus(req, res, next) {
   const status = req.body.data.status;
   if (!["finished", "seated", "cancelled", "booked"].includes(status)) {
@@ -178,11 +175,9 @@ async function onlyIfBooked(req, res, next) {
   return next();
 }
 
-async function read(req, res) {
-  const { reservation } = res.locals;
-  res.json({ data: reservation });
-}
+//////////////////// CRUD ////////////////////
 
+// CREATE
 async function create(req, res) {
   const newRestaurant = ({
     first_name,
@@ -196,6 +191,13 @@ async function create(req, res) {
   res.status(201).json({ data: createdRestaurant });
 }
 
+// READ
+async function read(req, res) {
+  const { reservation } = res.locals;
+  res.json({ data: reservation });
+}
+
+// UPDATE STATUS
 async function updateStatus(req, res) {
   const resId = req.params.reservation_id;
   const status = req.body.data.status;
@@ -204,6 +206,7 @@ async function updateStatus(req, res) {
   res.status(200).json({ data });
 }
 
+// UPDATE
 async function update(req, res) {
   const updatedReservation = req.body.data;
   const resId = req.params.reservation_id;

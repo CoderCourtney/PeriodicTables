@@ -1,11 +1,10 @@
 import React from "react";
 import { useHistory } from "react-router";
-import { deleteOnFinish, listReservations, listTables } from "../utils/api";
+import { deleteOnFinish, listTables } from "../utils/api";
 
 // TABLE DISPLAY IS PARENT
-export default function TableRow({ table, tables, setTables, date }) {
+export default function TableRow({ table, tables, setTables }) {
   const history = useHistory();
-  // if (!table) return null;
 
   const finishHandler = (event) => {
     event.preventDefault();
@@ -23,7 +22,6 @@ export default function TableRow({ table, tables, setTables, date }) {
         .then(() => listTables())
         .then(setTables)
         .then(() => history.go(0))
-        // .then(() => listReservations({ date }, abortController.signal))
         .catch();
     }
     return () => abortController.abort();

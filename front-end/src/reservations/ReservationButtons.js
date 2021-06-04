@@ -1,16 +1,12 @@
 import React from "react";
 
-import { Link, useHistory } from "react-router-dom";
-import { cancelStatus, listReservations } from "../utils/api";
+import { Link } from "react-router-dom";
 
 export default function ReservationsButtons({
   status,
   reservation_id,
-  setErrors,
-  loadDashboard,
   onCancel,
 }) {
-  const history = useHistory();
 
   const handleCancel = (event) => {
     event.preventDefault();
@@ -21,27 +17,6 @@ export default function ReservationsButtons({
       onCancel(reservation_id);
     }
   };
-
-  // function cancelHandler({
-  //   target: { dataset: { reservationIdCancel } } = {},
-  // }) {
-  //   if (
-  //     reservationIdCancel &&
-  //     window.confirm(
-  //       "Do you want to cancel this reservation?\n\nThis cannot be undone."
-  //     )
-  //   ) {
-  //     onCancel(reservationIdCancel);
-  //   }
-  // }
-
-  // function onCancel(reservation_id) {
-  //   const abortController = new AbortController();
-  //   cancelReservation(reservation_id, abortController.signal)
-  //     .then(loadDashboard)
-  //     .catch(setReservationsError);
-  //   return () => abortController.abort();
-  // }
 
   if (status === "booked") {
     return (
@@ -55,13 +30,13 @@ export default function ReservationsButtons({
         </Link>
         <Link
           to={`/reservations/${reservation_id}/edit`}
-          className="btn btn-secondary mr-1 oi"
+          className="btn btn-secondary mr-1 oi ml-1"
         >
           {" "}
           Edit
         </Link>
         <button
-          className="btn btn-danger mr-1 oi"
+          className="btn btn-danger mr-1 oi ml-1"
           data-reservation-id-cancel={reservation_id}
           onClick={handleCancel}
         >

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import ErrorAlert from "../layout/ErrorAlert";
 
-// import { Link } from "react-router-dom";
 import ReservationButtons from "./ReservationButtons";
 
 export default function ReservationsDisplay({ reservations, loadDashboard, onCancel }) {
@@ -30,13 +29,6 @@ export default function ReservationsDisplay({ reservations, loadDashboard, onCan
               >
                 {reservation.status}
               </p>
-              {/* <button
-              type="button"
-              className="btn btn-primary"
-              // onClick={history.goBack()}
-            >
-              Seat
-            </button> */}
               <ReservationButtons
                 reservation_id={reservation.reservation_id}
                 status={reservation.status}

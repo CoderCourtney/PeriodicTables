@@ -42,12 +42,13 @@ export default function Search() {
             required
           />
         </div>
+        <br />
         <button type="submit" className="btn btn-primary">
           Find
         </button>
         <button
           type="button"
-          className="btn btn-danger"
+          className="btn btn-danger ml-1"
           onClick={() => history.goBack()}
         >
           Cancel

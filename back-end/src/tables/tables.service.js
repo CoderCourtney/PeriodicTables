@@ -6,12 +6,14 @@ const tableName = "tables";
 function list() {
   return knex(tableName).select("*").orderBy("table_name", "asc");
 }
+
 //   "/" .post(controller.create) POST tables => new table
 function create(newTable) {
   return knex(tableName)
     .insert(newTable, "*")
     .then((createdTable) => createdTable[0]);
 }
+
 //   "/:table_id" .get(controller.read) GET tables tableID
 function read(table_id) {
   return knex(tableName).where({ table_id }).first();
@@ -26,12 +28,9 @@ function update(updatedTable) {
     .then((updatedTab) => updatedTab[0]);
 }
 
-
 function destroy(resId) {
   return knex(tableName).where({ reservation_id: null }).del();
 }
-// table_id
-// reservation_id -null -id
 
 module.exports = {
   list,

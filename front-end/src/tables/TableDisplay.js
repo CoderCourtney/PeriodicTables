@@ -1,8 +1,6 @@
 import React from "react";
 import TableRow from "./TableRow";
 
-// import { Link } from "react-router-dom";
-
 // DASHBOARD IS PARENT
 export default function TableDisplay({ tables, loadDasboard, setTables, date }) {
 

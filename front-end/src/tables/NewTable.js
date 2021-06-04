@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
-import { createTable, listTables } from "../utils/api";
+import { createTable } from "../utils/api";
 import { today } from "../utils/date-time";
 
 export default function NewTable({ tables, setTables }) {
@@ -17,21 +17,14 @@ export default function NewTable({ tables, setTables }) {
     setFormData({ ...formData, [target.name]: target.value });
   }
 
-  // function handleSubmit(event) {
-  //   event.preventDefault();
-  //   if (validateFields()) {
-  //     history.push(`/dashboard`);
-  //   }
-  // }
-
   // ALT FROM NEW RESERVATION
   function handleSubmit(event) {
     event.preventDefault();
-    // const abortController = new AbortController();
+    const abortController = new AbortController();
     setError(null);
     const valid = validateFields();
     if (valid) {
-      createTable(formData)
+      createTable(formData, abortController.signal)
         .then((returnedTable) =>
           setTables([...tables, { ...returnedTable, status: "free" }])
         )
@@ -73,6 +66,7 @@ export default function NewTable({ tables, setTables }) {
         value={formData.table_name}
         required
       />
+      <br />
       <label htmlFor="capacity">Capacity:&nbsp;</label>
       <input
         name="capacity"
@@ -83,8 +77,15 @@ export default function NewTable({ tables, setTables }) {
         value={formData.capacity}
         required
       />
-      <button type="submit">Submit</button>
-      <button type="button" onClick={history.goBack}>
+      <br />
+      <button type="submit" className="btn btn-secondary mr-1 oi ml-1">
+        Submit
+      </button>
+      <button
+        type="button"
+        className="btn btn-danger mr-1 oi ml-1"
+        onClick={history.goBack}
+      >
         Cancel
       </button>
     </form>

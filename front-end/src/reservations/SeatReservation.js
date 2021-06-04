@@ -10,9 +10,7 @@ import ErrorAlert from "../layout/ErrorAlert";
 import { today } from "../utils/date-time";
 
 export default function SeatReservation({
-  reservations,
   tables,
-  loadDashboard,
   setReservations,
   setTables,
 }) {
@@ -22,7 +20,6 @@ export default function SeatReservation({
   const [reservation, setReservation] = useState({});
   const { reservation_id } = useParams();
 
-  //   if (!tables || !reservations) return null;
 
   function handleChange({ target }) {
     setTableId(target.value);
@@ -48,27 +45,10 @@ export default function SeatReservation({
     }
   }
 
-  //   function handleSubmit(event) {
-  //     event.preventDefault();
-  //     setErrors(null);
-  //     const valid = validateSeat();
-  //     // console.log("\n\n\n errors", errors);
-  //     if (valid) {
-  //       createReservation(formData)
-  //         .then(() =>
-  //           history.push(`/dashboard?date=${formData.reservation_date}`)
-  //         )
-  //         .catch(setErrors);
-  //     }
-  //   }
-
   function validateSeat() {
     const foundErrors = [];
     const foundTable = tables.find((table) => +table.table_id === +tableId);
-    // const foundReservation = reservations.find(
-    //   (reservation) => +reservation.reservation_id === +reservation_id
-    // );
-
+   
     if (!foundTable) {
       foundErrors.push("The table you selected does not exist.");
     } else if (!reservation) {
@@ -125,40 +105,3 @@ export default function SeatReservation({
   );
 }
 
-
-///////////// TA
-
-
-// function finish(table) {
-//   return knex.transaction(async (transaction) => {
-//     await knex("reservations")
-//       .where({ reservation_id: table.reservation_id })
-//       .update({ status: "finished" })
-//       .transacting(transaction);
-//     return knex("tables")
-//       .where({ table_id: table.table_id })
-//       .update({ reservation_id: null }, "*")
-//       .transacting(transaction)
-//       .then((records) => records[0]);
-//   });
-// }
-
-// function finishHandler({
-//   target: { dataset: { tableIdFinish, reservationIdFinish } } = {},
-// }) {
-//   if (
-//     tableIdFinish &&
-//     reservationIdFinish &&
-//     window.confirm(
-//       "Is this table ready to seat new guests?\n\nThis cannot be undone."
-//     )
-//   ) {
-//     onFinish(tableIdFinish, reservationIdFinish);
-//   }
-// }
-
-// function onFinish(table_id, reservation_id) {
-//   finishTable(table_id, reservation_id)
-//     .then(loadDashboard)
-//     .catch(setTablesError);
-// }

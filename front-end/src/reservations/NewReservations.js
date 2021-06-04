@@ -25,11 +25,6 @@ export default function NewReservation({ loadDashboard, createOrEdit }) {
     const abortController = new AbortController();
     if (reservation_id) {
       readReservation(reservation_id, abortController.signal)
-        // .then((foundRes) => {
-        //   let resDate = new Date(foundRes.reservation_date).toISOString().substr(0, 10);
-        //   console.log(foundRes.reservation_date, resDate);
-        //   return foundRes;
-        // })
         .then((foundRes) =>
           setFormData({
             first_name: foundRes.first_name,
@@ -46,8 +41,6 @@ export default function NewReservation({ loadDashboard, createOrEdit }) {
     }
     return () => abortController.abort();
   }, [reservation_id]);
-
-  // console.log(formData);
 
   function handleChange({ target }) {
     setFormData({ ...formData, [target.name]: target.value });
@@ -199,14 +192,11 @@ export default function NewReservation({ loadDashboard, createOrEdit }) {
         </button>
         <button
           type="button"
-          className="btn btn-danger"
+          className="btn btn-danger ml-1"
           onClick={history.goBack}
         >
           Cancel
         </button>
-        {/* <button onClick={() => history.goBack()} className="btn btn-danger">
-          Cancel
-        </button> */}
       </form>
     </div>
   );

@@ -4,6 +4,7 @@ const reservationsService = require("../reservations/reservations.service");
 
 const validFields = ["table_name", "capacity"];
 
+// LIST
 async function list(req, res) {
   res.json({ data: await tablesService.list() });
 }
@@ -28,7 +29,7 @@ function tableValidator(data, validFields) {
   return fieldsNotValid;
 }
 
-// CREATE MIDDLEWARE
+// CREATE MIDDLEWARE 1 OF 1
 function hasValidCreateFields(req, res, next) {
   const { data = {} } = req.body;
   const invalidFields = tableValidator(data, validFields);
@@ -127,12 +128,16 @@ async function tableNotOccupied(req, res, next) {
   });
 }
 
+//////////////////// CRUD ////////////////////
+
+// CREATE
 async function create(req, res) {
   const newTable = req.body.data;
   const createdTable = await tablesService.create(newTable);
   res.status(201).json({ data: createdTable });
 }
 
+// UPDATE
 async function update(req, res) {
   const updatedTable = {
     ...res.locals.table,
@@ -148,6 +153,7 @@ async function update(req, res) {
   res.status(200).json({ data });
 }
 
+// DELETE 
 async function destroy(req, res) {
   const tabId = req.params.table_id;
   const resIdOnTable = res.locals.reservation_id;
