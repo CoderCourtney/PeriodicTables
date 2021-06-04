@@ -28,6 +28,7 @@ function update(updatedTable) {
     .then((updatedTab) => updatedTab[0]);
 }
 
+// DELETE "/:table_id/seat"
 function destroy(resId) {
   return knex(tableName).where({ reservation_id: null }).del();
 }
