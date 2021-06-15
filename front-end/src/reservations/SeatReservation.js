@@ -96,8 +96,8 @@ export default function SeatReservation({
           {tableOptionsJSX()}
         </select>
 
-        <button type="submit">Submit</button>
-        <button type="button" onClick={history.goBack}>
+        <button type="submit" className="btn btn-primary ml-1">Submit</button>
+        <button type="button" className="btn btn-danger ml-1" onClick={history.goBack}>
           Cancel
         </button>
       </form>

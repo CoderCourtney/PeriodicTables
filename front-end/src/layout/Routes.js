@@ -46,6 +46,10 @@ function Routes() {
     return () => abortController.abort();
   }
 
+  const filteredReservations = reservations.filter((reservation) => {
+    return reservation.status === "booked" || reservation.status === "seated";
+  });
+
 function onCancel(reservation_id) {
   const abortController = new AbortController();
   cancelStatus(reservation_id, abortController.signal)
@@ -69,7 +73,7 @@ function onCancel(reservation_id) {
       <Route path="/dashboard">
         <Dashboard
           date={date}
-          reservations={reservations}
+          reservations={filteredReservations}
           reservationsError={reservationsError}
           tables={tables}
           setTables={setTables}
@@ -83,7 +87,7 @@ function onCancel(reservation_id) {
       </Route>
       <Route exact={true} path="/reservations/:reservation_id/seat">
         <SeatReservation
-          reservations={reservations}
+          reservations={filteredReservations}
           tables={tables}
           loadDashboard={loadDashboard}
           setReservations={setReservations}

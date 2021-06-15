@@ -7,7 +7,6 @@ export default function ReservationsButtons({
   reservation_id,
   onCancel,
 }) {
-
   const handleCancel = (event) => {
     event.preventDefault();
     const confirmBox = window.confirm(
@@ -23,7 +22,7 @@ export default function ReservationsButtons({
       <div>
         <Link
           to={`/reservations/${reservation_id}/seat`}
-          className="btn btn-secondary mr-1 oi"
+          className="btn btn-primary mr-1 oi"
         >
           {" "}
           Seat

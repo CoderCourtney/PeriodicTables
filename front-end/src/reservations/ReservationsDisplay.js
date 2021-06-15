@@ -5,15 +5,15 @@ import ReservationButtons from "./ReservationButtons";
 
 export default function ReservationsDisplay({ reservations, loadDashboard, onCancel }) {
   const [errors, setErrors] = useState(null);
-  const filteredReservations = reservations.filter((reservation) => {
-    return reservation.status === "booked" || reservation.status === "seated";
-  });
+  // const filteredReservations = reservations.filter((reservation) => {
+  //   return reservation.status === "booked" || reservation.status === "seated";
+  // });
 
   return (
     <div>
       <ErrorAlert error={errors} />
       <div>
-        {filteredReservations.map((reservation) => (
+        {reservations.map((reservation) => (
           <div className="card" key={reservation.reservation_id}>
             <div className="card-body">
               <h4 className="card-title">

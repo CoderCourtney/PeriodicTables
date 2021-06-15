@@ -32,13 +32,14 @@ export default function TableRow({ table, tables, setTables }) {
       <th scope="row">{table.table_id}</th>
       <td>{table.table_name}</td>
       <td>{table.capacity}</td>
-      <td data-table-id-status={table.table_id}>
+      <td data-table-id-status={table.table_id} className={"text-primary"}>
         {table.reservation_id ? "occupied" : "free"}
       </td>
       <td>
         {table.reservation_id ? (
           <button
             type="button"
+            className="btn btn-success ml-1"
             data-table-id-finish={table.table_id}
             onClick={finishHandler}
           >
