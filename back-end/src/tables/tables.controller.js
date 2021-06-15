@@ -153,7 +153,7 @@ async function update(req, res) {
   res.status(200).json({ data });
 }
 
-// DELETE 
+// DELETE
 async function destroy(req, res) {
   const tabId = req.params.table_id;
   const resIdOnTable = res.locals.reservation_id;

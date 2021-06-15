@@ -70,7 +70,7 @@ export async function listReservations(params, signal) {
 
 export async function listTables(signal) {
   const url = new URL(`${API_BASE_URL}/tables`);
- 
+
   return await fetchJson(url, { headers, signal }, []);
 }
 
@@ -135,7 +135,21 @@ export async function cancelStatus(resId, signal) {
   const options = {
     method: "PUT",
     headers,
-    body: JSON.stringify({data: { status: "cancelled" } }),
+    body: JSON.stringify({ data: { status: "cancelled" } }),
+    signal,
+  };
+  return await fetchJson(url, options, []);
+}
+
+export async function editReservation(reservation, resId, signal) {
+  const url = `${API_BASE_URL}/reservations/${resId}`;
+  reservation.people = +reservation.people;
+  console.log("reservation", reservation);
+    console.log("resId", resId);
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: reservation }),
     signal,
   };
   return await fetchJson(url, options, []);

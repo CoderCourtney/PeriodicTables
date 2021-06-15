@@ -34,14 +34,14 @@ function Dashboard({
       </div>
       <button
         type="button"
-        className="btn btn-secondary"
+        className="btn btn-primary"
         onClick={() => history.push(`/dashboard?date=${previous(date)}`)}
       >
         Previous
       </button>
       <button
         type="button"
-        className="btn btn-info ml-1"
+        className="btn btn-warning ml-1"
         onClick={() => history.push(`/dashboard?date=${today()}`)}
       >
         Today

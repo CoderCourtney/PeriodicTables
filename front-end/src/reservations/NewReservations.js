@@ -4,6 +4,7 @@ import {
   createReservation,
   formatPhoneNumber,
   readReservation,
+  editReservation,
 } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { today } from "../utils/date-time";
@@ -27,14 +28,18 @@ export default function NewReservation({ loadDashboard, createOrEdit }) {
       readReservation(reservation_id, abortController.signal)
         .then((foundRes) =>
           setFormData({
-            first_name: foundRes.first_name,
-            last_name: foundRes.last_name,
-            mobile_number: foundRes.mobile_number,
+            ...foundRes,
             reservation_date: new Date(foundRes.reservation_date)
               .toISOString()
               .substr(0, 10),
-            reservation_time: foundRes.reservation_time,
-            people: foundRes.people,
+            // first_name: foundRes.first_name,
+            // last_name: foundRes.last_name,
+            // mobile_number: foundRes.mobile_number,
+            // reservation_date: new Date(foundRes.reservation_date)
+            // .toISOString()
+            // .substr(0, 10),
+            // reservation_time: foundRes.reservation_time,
+            // people: foundRes.people,
           })
         )
         .catch(setErrors);
@@ -54,18 +59,43 @@ export default function NewReservation({ loadDashboard, createOrEdit }) {
     });
   };
 
+  // function handleSubmit(event) {
+  //   event.preventDefault();
+  //   setErrors(null);
+
+  //   const valid = validateDate();
+  //   if (valid) {
+  //     createReservation(formData)
+  //       .then(() => loadDashboard())
+  //       .then(() =>
+  //         history.push(`/dashboard?date=${formData.reservation_date}`)
+  //       )
+  //       .catch(setErrors);
+
+  //   }
+  // }
+
   function handleSubmit(event) {
     event.preventDefault();
     setErrors(null);
 
     const valid = validateDate();
     if (valid) {
-      createReservation(formData)
-        .then(() => loadDashboard())
-        .then(() =>
-          history.push(`/dashboard?date=${formData.reservation_date}`)
-        )
-        .catch(setErrors);
+      if (reservation_id) {
+        editReservation(formData, reservation_id)
+          .then(() => loadDashboard())
+          .then(() =>
+            history.push(`/dashboard?date=${formData.reservation_date}`)
+          )
+          .catch(setErrors);
+      } else {
+        createReservation(formData)
+          .then(() => loadDashboard())
+          .then(() =>
+            history.push(`/dashboard?date=${formData.reservation_date}`)
+          )
+          .catch(setErrors);
+      }
     }
   }
 
@@ -78,7 +108,7 @@ export default function NewReservation({ loadDashboard, createOrEdit }) {
     if (reservationDate.getDay() === 1) {
       errorsArray.push("We are closed on Tuesdays, hope to see you soon!");
     }
-    if (formData.reservationDate < today()) {
+    if (reservationDate < today()) {
       errorsArray.push(
         "Reservations cannot be made in the past, pick today's date or a future date."
       );
